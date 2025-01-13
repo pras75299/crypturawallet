@@ -8,7 +8,11 @@ import { Card } from "@/components/ui/card";
 import { WalletCard } from "@/components/ui/wallet-card";
 import { BackgroundGradient } from "@/components/background-gradient";
 import { ParticlesBackground } from "@/components/particles-background";
-import { generateNewMnemonic, createEthereumWallet, createSolanaWallet } from "@/lib/utils/mnemonic";
+import {
+  generateNewMnemonic,
+  createEthereumWallet,
+  createSolanaWallet,
+} from "@/lib/utils/mnemonic";
 import { toast } from "sonner";
 
 interface WalletData {
@@ -50,12 +54,13 @@ export default function Home() {
     }
 
     try {
-      const wallet = type === "ethereum" 
-        ? await createEthereumWallet(mnemonic)
-        : await createSolanaWallet(mnemonic);
+      const wallet =
+        type === "ethereum"
+          ? await createEthereumWallet(mnemonic)
+          : await createSolanaWallet(mnemonic);
 
-      const existingWallet = wallets.find(w => 
-        w.type === type && w.address === wallet.address
+      const existingWallet = wallets.find(
+        (w) => w.type === type && w.address === wallet.address
       );
 
       if (existingWallet) {
@@ -63,11 +68,14 @@ export default function Home() {
         return;
       }
 
-      setWallets(prev => [...prev, {
-        id: Math.random().toString(36).substr(2, 9),
-        type,
-        ...wallet
-      }]);
+      setWallets((prev) => [
+        ...prev,
+        {
+          id: Math.random().toString(36).substr(2, 9),
+          type,
+          ...wallet,
+        },
+      ]);
 
       toast.success(`${type} wallet created successfully`);
     } catch (error) {
@@ -78,7 +86,7 @@ export default function Home() {
 
   const deleteWallet = (id: string) => {
     try {
-      setWallets(prev => prev.filter(wallet => wallet.id !== id));
+      setWallets((prev) => prev.filter((wallet) => wallet.id !== id));
       toast.success("Wallet deleted successfully");
     } catch (error) {
       toast.error("Failed to delete wallet");
@@ -88,18 +96,19 @@ export default function Home() {
   return (
     <main className="min-h-screen w-full bg-background text-foreground pb-16">
       <ParticlesBackground />
-      
+
       <div className="container mx-auto px-4 py-16 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 mb-4">
+          <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 mb-4 pb-3">
             Crypto Wallet Generator
           </h1>
           <p className="text-lg text-muted-foreground mb-8">
-            Generate secure wallets for Ethereum and Solana with a single mnemonic phrase
+            Generate secure wallets for Ethereum and Solana with a single
+            mnemonic phrase
           </p>
 
           <Button
@@ -124,7 +133,9 @@ export default function Home() {
               <Card className="p-6 backdrop-blur-sm bg-card/30 border border-border/50">
                 <div className="flex flex-col space-y-4">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-semibold">Your Mnemonic Phrase</h2>
+                    <h2 className="text-xl font-semibold">
+                      Your Mnemonic Phrase
+                    </h2>
                     <div className="flex gap-2">
                       <Button
                         variant="ghost"
@@ -147,37 +158,37 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
-                    {showMnemonic ? (
-                      mnemonic.split(" ").map((word, index) => (
-                        <motion.div
-                          key={index}
-                          initial={{ opacity: 0, scale: 0.9 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: index * 0.03 }}
-                          className="relative group"
-                        >
-                          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-md blur-sm" />
-                          <div className="relative p-2 rounded-md bg-background/50 border border-border/50 font-mono text-sm">
-                            {word}
-                          </div>
-                        </motion.div>
-                      ))
-                    ) : (
-                      Array(24).fill("••••").map((dots, index) => (
-                        <motion.div
-                          key={index}
-                          initial={{ opacity: 0, scale: 0.9 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: index * 0.03 }}
-                          className="relative group"
-                        >
-                          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-md blur-sm" />
-                          <div className="relative p-2 rounded-md bg-background/50 border border-border/50 font-mono text-sm">
-                            {dots}
-                          </div>
-                        </motion.div>
-                      ))
-                    )}
+                    {showMnemonic
+                      ? mnemonic.split(" ").map((word, index) => (
+                          <motion.div
+                            key={index}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: index * 0.03 }}
+                            className="relative group"
+                          >
+                            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-md blur-sm" />
+                            <div className="relative p-2 rounded-md bg-background/50 border border-border/50 font-mono text-sm">
+                              {word}
+                            </div>
+                          </motion.div>
+                        ))
+                      : Array(24)
+                          .fill("••••")
+                          .map((dots, index) => (
+                            <motion.div
+                              key={index}
+                              initial={{ opacity: 0, scale: 0.9 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: index * 0.03 }}
+                              className="relative group"
+                            >
+                              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-md blur-sm" />
+                              <div className="relative p-2 rounded-md bg-background/50 border border-border/50 font-mono text-sm">
+                                {dots}
+                              </div>
+                            </motion.div>
+                          ))}
                   </div>
                 </div>
               </Card>
