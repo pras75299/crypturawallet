@@ -6,8 +6,6 @@ import { Wallet, Copy, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { WalletCard } from "@/components/ui/wallet-card";
-import { BackgroundGradient } from "@/components/background-gradient";
-import { ParticlesBackground } from "@/components/particles-background";
 import {
   generateNewMnemonic,
   createEthereumWallet,
@@ -26,6 +24,7 @@ export default function Home() {
   const [mnemonic, setMnemonic] = useState<string>("");
   const [showMnemonic, setShowMnemonic] = useState(true);
   const [wallets, setWallets] = useState<WalletData[]>([]);
+  const [walletCounts, setWalletCounts] = useState({ ethereum: 0, solana: 0 });
 
   const generateMnemonic = () => {
     try {
@@ -33,6 +32,7 @@ export default function Home() {
       setMnemonic(newMnemonic);
       setShowMnemonic(true);
       setWallets([]);
+      setWalletCounts({ ethereum: 0, solana: 0 });
     } catch (error) {
       toast.error("Failed to generate mnemonic");
     }
@@ -56,17 +56,8 @@ export default function Home() {
     try {
       const wallet =
         type === "ethereum"
-          ? await createEthereumWallet(mnemonic)
-          : await createSolanaWallet(mnemonic);
-
-      const existingWallet = wallets.find(
-        (w) => w.type === type && w.address === wallet.address
-      );
-
-      if (existingWallet) {
-        toast.error(`This ${type} wallet already exists`);
-        return;
-      }
+          ? await createEthereumWallet(mnemonic, walletCounts.ethereum)
+          : await createSolanaWallet(mnemonic, walletCounts.solana);
 
       setWallets((prev) => [
         ...prev,
@@ -76,6 +67,11 @@ export default function Home() {
           ...wallet,
         },
       ]);
+
+      setWalletCounts((prev) => ({
+        ...prev,
+        [type]: prev[type] + 1,
+      }));
 
       toast.success(`${type} wallet created successfully`);
     } catch (error) {
@@ -94,9 +90,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen w-full bg-background text-foreground pb-16">
-      <ParticlesBackground />
-
+    <main className="min-h-screen w-full text-foreground pb-16">
       <div className="container mx-auto px-4 py-16 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
